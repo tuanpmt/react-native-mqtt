@@ -1,0 +1,23 @@
+{
+  "name": "react-native-mqtt",
+  "version": "0.1.0",
+  "description": "MQTT client for react-native",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuanpmt/react-native-mqtt.git"
+  },
+  "keywords": [
+    "mqtt",
+    "reactnative"
+  ],
+  "author": "Tuan PM <tuanpm@live.com> (http://tuanpm.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tuanpmt/react-native-mqtt/issues"
+  },
+  "homepage": "https://github.com/tuanpmt/react-native-mqtt#readme"
+}
