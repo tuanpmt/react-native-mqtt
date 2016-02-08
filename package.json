@@ -12,7 +12,8 @@
   },
   "keywords": [
     "mqtt",
-    "reactnative"
+    "reactnative",
+    "iot"
   ],
   "author": "Tuan PM <tuanpm@live.com> (http://tuanpm.net)",
   "license": "MIT",

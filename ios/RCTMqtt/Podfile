@@ -1,0 +1,10 @@
+platform :ios, '9.0'
+
+inhibit_all_warnings!
+
+pod 'MQTTClient'
+pod 'MQTTClient/Websocket' 
+
+target "RCTMqtt" do
+end  
+

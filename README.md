@@ -1,18 +1,25 @@
 
 
-## Description
+## Description 
 
-[react-native](https://github.com/facebook/react-native) mqtt client module 
+[react-native](https://github.com/facebook/react-native) mqtt client module
 
-## Featues
-* Support both IOS and Android
+## MQTT Featues (inherit from native MQTT framework)
+* Use [MQTT Framework](https://github.com/ckrey/MQTT-Client-Framework) for IOS, [Paho MQTT Client](https://eclipse.org/paho/clients/android/) for Android
+* Support both IOS and Android (now only support IOS)
+* SSL/TSL with 3 mode
+* Native library, support mqtt over tcp and mqtt over websocket
+* Auto reconnect
 
+## Warning
+This library in progress developing, api may change, and not support android now
 
 ## Getting started
 ### Mostly automatic install
 1. `npm install rnpm --global`
 2. `npm install react-native-mqtt@latest --save`
 3. `rnpm link react-native-mqtt`
+4. For IOS users: add this linker flag: `-ObjC -licucore`
 
 ### Manual install
 #### iOS
@@ -59,7 +66,7 @@ dependencies {
 }
 ```
 
-[WARNING]
+
 But not like this
 
 ```java
@@ -74,8 +81,36 @@ buildscript {
 ## Usage
 
 ```javascript
+var mqtt    = require('react-native-mqtt');
+
+var client  = mqtt.Client({
+  uri: 'mqtt://mqtt.yourhost.com:1883'
+});
+
+client.on('connect', function () {
+  client.subscribe('/topic/qos0');
+  client.subscribe('/topic/qos1', 1);
+  client.subscribe('/topic/qos2', 2);
+
+  client.publish('/topic/qos0', 'string will publish');
+});
+
+client.on('message', function (topic, message) {
+  // message is Buffer
+  console.log(message.toString());
+  client.disconnect();
+});
 
 ```
+
+## API
+* `mqtt.Client(options)` with
+  - `uri`: `protocol://host:port`, protocol is [mqtt | mqtts | ws | wss]
+  - `host`: ipaddress or host name (overide by uri if set)
+  - `port`: port number (overide by uri if set)
+  - `tls`: true/false (overide by uri if set to mqtts or wss)
+
+...
 
 ## Todo
 
@@ -85,5 +120,5 @@ buildscript {
 ## LICENSE
 
 ```
-
+INHERIT FROM MQTT LIBRARY (progress)
 ```
