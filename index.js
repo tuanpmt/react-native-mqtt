@@ -45,6 +45,9 @@ module.exports = {
 			},
 			subscribe: function(topic) {
 				Mqtt.subscribe(topic);
+			},
+			publish: function(topic, data) {
+				Mqtt.publish(topic, data);
 			}
 		};
 	},

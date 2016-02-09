@@ -57,7 +57,7 @@ RCT_EXPORT_MODULE();
                                 @"port": @1883,
                                 @"protcol": @"tcp", //ws
                                 @"tls": @NO,
-                                @"keepalice": @120, //second
+                                @"keepalive": @120, //second
                                 @"clientId" : @"react-native-mqtt",
                                 @"protocolLevel": @4,
                                 @"clean": @YES,

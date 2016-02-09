@@ -92,12 +92,14 @@ client.on('connect', function () {
   client.subscribe('/topic/qos1', 1);
   client.subscribe('/topic/qos2', 2);
 
-  client.publish('/topic/qos0', 'string will publish');
+  client.publish('/topic/qos0', 'publish with string');
+  client.publish('/topic/qos1', new ArrayBuffer(10)); //publish with arraybuffer
 });
 
 client.on('message', function (topic, message) {
-  // message is Buffer
-  console.log(message.toString());
+  // message is ArrayBuffer
+  //topic is string
+  //console.log(message.toString());
   client.disconnect();
 });
 
