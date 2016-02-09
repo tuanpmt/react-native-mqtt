@@ -40,7 +40,7 @@ This library in progress developing, api may change, and not support android now
 import com.tuanpm.RCTMqtt.*; // import
 
 
-.addPackage(new RCT<qttPackage()) //for older version
+.addPackage(new RCTMqttPackage()) //for older version
 
 new RCTMqttPackage()           // for newest version of react-native
 ```
