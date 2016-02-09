@@ -4,7 +4,7 @@
 
 [react-native](https://github.com/facebook/react-native) mqtt client module
 
-## MQTT Featues (inherit from native MQTT framework)
+## MQTT Features (inherit from native MQTT framework)
 * Use [MQTT Framework](https://github.com/ckrey/MQTT-Client-Framework) for IOS, [Paho MQTT Client](https://eclipse.org/paho/clients/android/) for Android
 * Support both IOS and Android (now only support IOS)
 * SSL/TSL with 3 mode
