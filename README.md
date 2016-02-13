@@ -47,60 +47,60 @@ new RCTMqttPackage()           // for newest version of react-native
 
 -  Append the following lines to `android/settings.gradle` before `include ':app'`:
 
-```java
+```
 include ':react-native-mqtt'
 project(':react-native-mqtt').projectDir = new File(rootProject.projectDir,  '../node_modules/react-native-mqtt/android')
+
 ```
+
 
 - Insert the following lines inside the dependencies block in `android/app/build.gradle`, don't missing `apply plugin:'java'` on top:
 
-```java
+```
 compile project(':react-native-mqtt')
 ```
 
 Notes:
 
-```java
+```
 dependencies {
   compile project(':react-native-mqtt')
 }
 ```
 
 
-But not like this
-
-```java
-buildscript {
-    ...
-    dependencies {
-      compile project(':react-native-mqtt')
-    }
-}
-```
-
 ## Usage
 
 ```javascript
 var mqtt    = require('react-native-mqtt');
 
-var client  = mqtt.Client({
-  uri: 'mqtt://mqtt.yourhost.com:1883'
-});
+/* create mqtt client */
+mqtt.createClient({
+  uri: 'mqtt://test.mosquitto.org:1883',
+  clientId: 'your_client_id'
+}).then(function(client) {
 
-client.on('connect', function () {
-  client.subscribe('/topic/qos0');
-  client.subscribe('/topic/qos1', 1);
-  client.subscribe('/topic/qos2', 2);
+  client.on('closed', function() {
+    console.log('mqtt.event.closed');
+    
+  });
+  
+  client.on('error', function(msg) {
+    console.log('mqtt.event.error', msg);
+    
+  });
 
-  client.publish('/topic/qos0', 'publish with string');
-  client.publish('/topic/qos1', new ArrayBuffer(10)); //publish with arraybuffer
-});
+  client.on('message', function(msg) {
+    console.log('mqtt.event.message', msg);
+  });
 
-client.on('message', function (topic, message) {
-  // message is ArrayBuffer
-  //topic is string
-  //console.log(message.toString());
-  client.disconnect();
+  client.on('connect', function() {
+    console.log('connected');
+    client.subscribe('/device_00059E18/data', 1);
+    client.publish('/device_00059E18/data', "test", 1, false);
+  });
+
+  client.connect();
 });
 
 ```

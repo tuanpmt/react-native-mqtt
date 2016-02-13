@@ -24,68 +24,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.LifecycleState;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.shell.MainReactPackage;
+
+import java.util.AbstractList;
+import java.util.Random;
 
 public class RCTMqttModule extends ReactContextBaseJavaModule {
 
     private static final String TAG = "RCTMqttModule";
     private final ReactApplicationContext _reactContext;
-
-    private final WritableMap defaultOptions;
-
-  // @"host": @"localhost",
-  //                               @"port": @1883,
-  //                               @"protcol": @"tcp", //ws
-  //                               @"tls": @NO,
-  //                               @"keepalive": @120, //second
-  //                               @"clientId" : @"react-native-mqtt",
-  //                               @"protocolLevel": @4,
-  //                               @"clean": @YES,
-  //                               @"auth": @NO,
-  //                               @"user": @"",
-  //                               @"pass": @"",
-  //                               @"will": @NO,
-  //                               @"willMsg": [NSNull null],
-  //                               @"willtopic": @"",
-  //                               @"willQos": @0,
-  //                               @"willRetainFlag": @NO
-
+    private HashMap<Integer, RCTMqtt> clients;
 
     public RCTMqttModule(ReactApplicationContext reactContext) {
         super(reactContext);
         _reactContext = reactContext;
-
-         /* Create defaults config*/
-         defaultOptions = (WritableMap) new WritableNativeMap();
-
-         defaultOptions.putString("host", "localhost");
-         defaultOptions.putInt("port", 1883);
-         defaultOptions.putString("protocol", "tcp");
-         defaultOptions.putBoolean("tls", false);
-         defaultOptions.putInt("keepalive", 1883);
-         defaultOptions.putString("clientId", "react-native-mqtt");
-         defaultOptions.putInt("protocolLevel", 4);
-         defaultOptions.putBoolean("clean", true);
-         defaultOptions.putBoolean("auth", false);
-         defaultOptions.putString("user", "");
-         defaultOptions.putString("pass", "");
-         defaultOptions.putBoolean("will", false);
-         defaultOptions.putInt("protocolLevel", 4);
-         defaultOptions.putBoolean("will", false);
-         defaultOptions.putString("willMsg", "");
-         defaultOptions.putString("willtopic", "");
-         defaultOptions.putInt("willQos", 0);
-         defaultOptions.putBoolean("willRetainFlag", false);
+        clients = new HashMap<Integer, RCTMqtt>();
     }
 
     @Override
@@ -94,95 +55,50 @@ public class RCTMqttModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void connect(final ReadableMap _options) {
-      if (_options.hasKey("host")) 
-        defaultOptions.putString("host", _options.getString("host"));
-      if(_options.hasKey("port"))
-        defaultOptions.putInt("port",_options.getInt("port"));
-      if(_options.hasKey("protocol"))
-        defaultOptions.putString("protocol",_options.getString("protocol"));
-      if(_options.hasKey("tls"))
-        defaultOptions.putBoolean("tls",_options.getBoolean("tls"));
-      if(_options.hasKey("keepalive"))
-        defaultOptions.putInt("keepalive",_options.getInt("keepalive"));
-      if(_options.hasKey("clientId"))
-        defaultOptions.putString("clientId",_options.getString("clientId"));
-      if(_options.hasKey("protocolLevel"))
-        defaultOptions.putInt("protocolLevel",_options.getInt("protocolLevel"));
-      if(_options.hasKey("clean"))
-        defaultOptions.putBoolean("clean",_options.getBoolean("clean"));
-      if(_options.hasKey("auth"))
-        defaultOptions.putBoolean("auth",_options.getBoolean("auth"));
-      if(_options.hasKey("user"))
-        defaultOptions.putString("user",_options.getString("user"));
-      if(_options.hasKey("pass"))
-        defaultOptions.putString("pass",_options.getString("pass"));
-      if(_options.hasKey("will"))
-        defaultOptions.putBoolean("will",_options.getBoolean("will"));
-      if(_options.hasKey("protocolLevel"))
-        defaultOptions.putInt("protocolLevel",_options.getInt("protocolLevel"));
-      if(_options.hasKey("will"))
-        defaultOptions.putBoolean("will",_options.getBoolean("will"));
-      if(_options.hasKey("willMsg"))
-        defaultOptions.putString("willMsg",_options.getString("willMsg"));
-      if(_options.hasKey("willtopic"))
-        defaultOptions.putString("willMsg",_options.getString("willMsg"));
-      if(_options.hasKey("willQos"))
-        defaultOptions.putInt("willQos",_options.getInt("willQos"));
-      if(_options.hasKey("willRetainFlag"))
-        defaultOptions.putBoolean("willRetainFlag", _options.getBoolean("willRetainFlag"));
-
-      ReadableMap options = (ReadableMap) defaultOptions;
-
-      MqttConnectOptions mqttoptions = new MqttConnectOptions();
-
-      if(options.getInt("protocolLevel") == 3)
-        mqttoptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
-      mqttoptions.setKeepAliveInterval(options.getInt("keepalive"));
-
-      String uri = "tcp://";
-      if(options.getBoolean("tls"))
-        uri = "ssl://";
-      uri += options.getString("host") + ":";
-      uri += options.getInt("port");
-      //mqttoptions.setServerURIs({uri});
-
-      if(options.getBoolean("auth")) {
-        String user = options.getString("user");
-        String pass = options.getString("pass");
-        if(user.length() > 0) 
-          mqttoptions.setUserName(user);
-        if(pass.length() > 0)
-          mqttoptions.setPassword(pass.toCharArray());
-      }
-
-      if(options.getBoolean("will")) {
-
-      }
-
-
+    public void createClient(final ReadableMap _options, Promise promise) {
+      int clientRef = randInt(1000, 9999);
+      RCTMqtt client = new RCTMqtt(clientRef, _reactContext, _options);
+      client.setCallback();
+      clients.put(clientRef, client);
+      promise.resolve(clientRef);
+      Log.d(TAG, "ClientRef:" + clientRef);
     }
 
     @ReactMethod
-    public void disconnect() {
-      
+    public void connect(final int clientRef) {
+      clients.get(clientRef).connect();
+    }
+    
+    @ReactMethod
+    public void disconnect(final int clientRef) {
+      clients.get(clientRef).disconnect();
+    }
+    
+
+    @ReactMethod
+    public void subscribe(final int clientRef, final String topic, final int qos) {
+      clients.get(clientRef).subscribe(topic, qos);
     }
 
     @ReactMethod
-    public void subscribe(final String topic) {
-
+    public void publish(final int clientRef, final String topic, final String payload, final int qos, final boolean retain) {
+      clients.get(clientRef).publish(topic, payload, qos, retain);
     }
+    
+    public static int randInt(int min, int max) {
 
-    @ReactMethod
-    public void publish(final String topic, final String message) {
+        // NOTE: This will (intentionally) not run as written so that folks
+        // copy-pasting have to think about how to initialize their
+        // Random instance.  Initialization of the Random instance is outside
+        // the main scope of the question, but some decent options are to have
+        // a field that is initialized once and then re-used as needed or to
+        // use ThreadLocalRandom (if using at least Java 1.7).
+        Random rand = new Random();
 
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
-
-    @ReactMethod
-    public void on(final String event) {
-
-    }
-
-
-
 }

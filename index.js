@@ -5,10 +5,52 @@ import {
 
 var Mqtt = NativeModules.Mqtt;
 
+var MqttClient = function(options, clientRef){
+	this.options = options;
+	this.clientRef = clientRef;
+	this.eventHandler = {};
+
+	this.dispatchEvent = function(data) {
+		
+		if(data && data.clientRef == this.clientRef && data.event) {
+
+			if(this.eventHandler[data.event]) {
+				this.eventHandler[data.event](data.message);
+			}
+		}	
+	}
+}
+
+MqttClient.prototype.on = function (event, callback) {
+	console.log('setup event', event);
+	this.eventHandler[event] = callback;
+}
+
+MqttClient.prototype.connect = function () {
+	Mqtt.connect(this.clientRef);
+}
+
+MqttClient.prototype.disconnect = function () {
+	Mqtt.disconnect(this.clientRef);
+}
+
+MqttClient.prototype.subscribe = function (topic, qos) {
+	Mqtt.subscribe(this.clientRef, topic, qos);
+}
+
+MqttClient.prototype.publish = function(topic, payload, qos, retain) {
+	Mqtt.publish(this.clientRef, topic, payload, qos, retain);
+}
+
 module.exports = {
-	options: {},
-	Client: function(options) {
-		this.options = options;
+	clients: [],
+	eventHandler: null,
+	dispatchEvents: function(data) {
+		this.clients.forEach(function(client) {
+			client.dispatchEvent(data);
+		});
+	},
+	createClient: async function(options) {
 		if(options.uri) {
 			var pattern = /^((mqtt[s]?|ws[s]?)?:(\/\/)([a-zA-Z_\.]*):?(\d+))$/;
 			var matches = options.uri.match(pattern);
@@ -16,40 +58,47 @@ module.exports = {
 			var host = matches[4];
 			var port =  matches[5];
 
-			this.options.port = parseInt(port);
-			this.options.host = host;
-			this.options.protocol = 'tcp';
+			options.port = parseInt(port);
+			options.host = host;
+			options.protocol = 'tcp';
+			
 
 			if(protocol == 'wss' || protocol == 'mqtts') {
-				this.options.tls = true;
+				options.tls = true;
 			}
 			if(protocol == 'ws' || protocol == 'wss') {
-				this.options.protocol = 'ws';
+				options.protocol = 'ws';
 			}
+			
 		}
-		//console.log(options)
-		var self = this;
-		return {
-			on: function(event, callback) {
-				console.log('subscribe event', event);
-				this[event] = DeviceEventEmitter.addListener(
-							  	event,
-							  	(data) => callback(data));
-			},
-			connect: function() {
-				console.log('connect', self.options);
-				Mqtt.connect(self.options);
-			},
-			disconnect: function() {
-				Mqtt.disconnect()
-			},
-			subscribe: function(topic) {
-				Mqtt.subscribe(topic);
-			},
-			publish: function(topic, data) {
-				Mqtt.publish(topic, data);
-			}
-		};
+		
+		let clientRef = await Mqtt.createClient(options);
+
+		var client = new MqttClient(options, clientRef);
+
+		/* Listen mqtt event */
+		if(this.eventHandler === null) {
+			console.log('add mqtt_events listener')
+			this.eventHandler = DeviceEventEmitter.addListener(
+							  	"mqtt_events",
+							  	(data) => this.dispatchEvents(data));
+		}
+		this.clients.push(client);
+
+		return client;
 	},
+	removeClient: function(client) {
+		var clientIdx = this.clients.indexOf(client);
+
+		/* TODO: destroy client in native module */
+
+		if(clientIdx > -1)
+			this.clients.splice(clientIdx, 1);
+
+		if(this.clients.length > 0) {
+			this.eventHandler.remove();
+			this.eventHandler = null;
+		}
+	}
 	
 };

@@ -33,9 +33,11 @@ repositories {
 }
 
 dependencies {
-  compile "com.facebook.react:react-native:0.19.+"
-  compile('org.eclipse.paho:org.eclipse.paho.android.service:1.0.2') {
+  compile 'com.facebook.react:react-native:0.19.+'
+  compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2') {
       exclude module: 'support-v4'
   }
+  compile 'org.bouncycastle:bcprov-jdk15on:1.54'
+
 }
 
