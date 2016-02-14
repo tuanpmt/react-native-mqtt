@@ -46,7 +46,6 @@ module.exports = {
 	clients: [],
 	eventHandler: null,
 	dispatchEvents: function(data) {
-		console.log(data);
 		this.clients.forEach(function(client) {
 			client.dispatchEvent(data);
 		});

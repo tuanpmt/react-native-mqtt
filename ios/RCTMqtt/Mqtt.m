@@ -24,8 +24,7 @@
 
 - (id)init {
     if ((self = [super init])) {
-        [DDLog addLogger:[DDASLLogger sharedInstance]];
-        [DDLog addLogger:[DDTTYLogger sharedInstance]];
+        
         self.defaultOptions = @{
                                 @"host": @"localhost",
                                 @"port": @1883,
@@ -106,10 +105,6 @@
     } else {
         
         [self.manager connectToLast];
-                [self.manager addObserver:self
-                               forKeyPath:@"state"
-                                  options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-                                  context:nil];
         
     }
 }
@@ -124,12 +119,7 @@
                                                                    @"clientRef": [NSNumber numberWithInt:[self clientRef]],
                                                                    @"message": @"closed"
                                                                    }];
-            @try{
-                [[NSOperationQueue mainQueue] cancelAllOperations];
-                [self.manager removeObserver:self forKeyPath:@"state"];
-            }@catch(id anException){
-                //do nothing, obviously it wasn't attached because an exception was thrown
-            }
+
             break;
         case MQTTSessionManagerStateClosing:
             [self.bridge.eventDispatcher sendDeviceEventWithName:@"mqtt_events"
@@ -210,8 +200,15 @@
 {
     [self disconnect];
     @try {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        [self.manager removeObserver:self forKeyPath:@"state"];
+        
+        @try{
+            
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            [self.manager removeObserver:self forKeyPath:@"state"];
+            [[NSOperationQueue mainQueue] cancelAllOperations];
+        }@catch(id anException){
+            //do nothing, obviously it wasn't attached because an exception was thrown
+        }
     }
     @catch (NSException *exception) {
         

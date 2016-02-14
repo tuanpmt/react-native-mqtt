@@ -11,20 +11,9 @@
 #import "MQTTMessage.h"
 #import "MQTTCoreDataPersistence.h"
 
-#ifdef LUMBERJACK
-#define LOG_LEVEL_DEF ddLogLevel
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelWarning;
-#else
-static const DDLogLevel ddLogLevel = DDLogLevelWarning;
-#endif
-#else
-#define DDLogVerbose NSLog
-#define DDLogWarn NSLog
-#define DDLogInfo NSLog
-#define DDLogError NSLog
-#endif
+//#define myLogLevel DDLogLevelVerbose
+
+#import "MQTTLog.h"
 
 @interface MQTTSession() <MQTTDecoderDelegate, MQTTTransportDelegate>
 
@@ -58,6 +47,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelWarning;
 #define DUPLOOP 1.0
 
 @implementation MQTTSession
+@synthesize certificates;
+
+- (void)setCertificates:(NSArray *)newCertificates {
+    certificates = newCertificates;
+    if (self.transport) {
+        if ([self.transport respondsToSelector:@selector(setCertificates:)]) {
+            [self.transport performSelector:@selector(setCertificates:) withObject:certificates];
+        }
+    }
+}
 
 - (instancetype)init {
     DDLogVerbose(@"[MQTTSession] init");

@@ -42,6 +42,8 @@ RCT_EXPORT_MODULE();
 - (instancetype)init
 {
     if ((self = [super init])) {
+        [DDLog addLogger:[DDASLLogger sharedInstance]];
+        [DDLog addLogger:[DDTTYLogger sharedInstance]];
         
         NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
         
