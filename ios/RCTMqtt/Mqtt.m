@@ -68,9 +68,12 @@
             
             self.manager = [[MQTTSessionManager alloc] init];
             self.manager.delegate = self;
+            MQTTSSLSecurityPolicy *securityPolicy = nil;
+            if(self.options[@"tls"]) {
+                securityPolicy = [MQTTSSLSecurityPolicy policyWithPinningMode:MQTTSSLPinningModeNone];
+                securityPolicy.allowInvalidCertificates = YES;
+            }
             
-            //            MQTTSSLSecurityPolicy *securityPolicy = [MQTTSSLSecurityPolicy policyWithPinningMode:MQTTSSLPinningModeNone];
-            //            securityPolicy.allowInvalidCertificates = YES;
             
             NSData *willMsg = nil;
             if(self.options[@"willMsg"] != [NSNull null]) {
@@ -90,7 +93,7 @@
                             willQos:(MQTTQosLevel)[self.options[@"willQos"] intValue]
                      willRetainFlag:[self.options[@"willRetainFlag"] boolValue]
                        withClientId:[self.options valueForKey:@"clientId"]
-                     securityPolicy:nil
+                     securityPolicy:securityPolicy
                        certificates:nil
              ];
             

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import javax.net.ssl.*;
-import java.security.KeyStore;
 import java.security.SecureRandom;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -36,6 +35,18 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 
 public class RCTMqtt implements MqttCallback{
@@ -128,6 +139,32 @@ public class RCTMqtt implements MqttCallback{
     String uri = "tcp://";
     if(options.getBoolean("tls")) {
       uri = "ssl://";
+      try {
+        /* 
+        http://stackoverflow.com/questions/3761737/https-get-ssl-with-android-and-self-signed-server-certificate
+        
+        WARNING: for anybody else arriving at this answer, this is a dirty, 
+        horrible hack and you must not use it for anything that matters. 
+        SSL/TLS without authentication is worse than no encryption at all - 
+        reading and modifying your "encrypted" data is trivial for an attacker and you wouldn't even know it was happening
+        */
+        
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new X509TrustManager[]{new X509TrustManager(){
+            public void checkClientTrusted(X509Certificate[] chain,
+                    String authType) throws CertificateException {}
+            public void checkServerTrusted(X509Certificate[] chain,
+                    String authType) throws CertificateException {}
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }}}, new SecureRandom());
+
+        mqttoptions.setSocketFactory(sslContext.getSocketFactory());
+      } catch(Exception e) {
+
+      }
+      
+
     }
     uri += options.getString("host") + ":";
     uri += options.getInt("port");

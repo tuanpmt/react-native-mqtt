@@ -6,13 +6,12 @@
 
 ## MQTT Features (inherit from native MQTT framework)
 * Use [MQTT Framework](https://github.com/ckrey/MQTT-Client-Framework) for IOS, [Paho MQTT Client](https://eclipse.org/paho/clients/android/) for Android
-* Support both IOS and Android (now only support IOS)
-* SSL/TSL with 3 mode
-* Native library, support mqtt over tcp and mqtt over websocket
-* Auto reconnect
+* Support both IOS and Android
+* SSL/TLS 
+* Native library, support mqtt over tcp 
 
 ## Warning
-This library in progress developing, api may change, and not support android now
+This library in progress developing, api may change, SSL/TLS non verify 
 
 ## Getting started
 ### Mostly automatic install
@@ -76,7 +75,7 @@ var mqtt    = require('react-native-mqtt');
 
 /* create mqtt client */
 mqtt.createClient({
-  uri: 'mqtt://test.mosquitto.org:1883',
+  uri: 'mqtt://test.mosquitto.org:1883', 
   clientId: 'your_client_id'
 }).then(function(client) {
 
@@ -96,8 +95,8 @@ mqtt.createClient({
 
   client.on('connect', function() {
     console.log('connected');
-    client.subscribe('/device_00059E18/data', 1);
-    client.publish('/device_00059E18/data', "test", 1, false);
+    client.subscribe('/data', 0);
+    client.publish('/data', "test", 0, false);
   });
 
   client.connect();
@@ -106,13 +105,27 @@ mqtt.createClient({
 ```
 
 ## API
-* `mqtt.Client(options)` with
-  - `uri`: `protocol://host:port`, protocol is [mqtt | mqtts | ws | wss]
-  - `host`: ipaddress or host name (overide by uri if set)
-  - `port`: port number (overide by uri if set)
-  - `tls`: true/false (overide by uri if set to mqtts or wss)
+* `mqtt.createClient(options)`  create new client instance with `options`, async operation
+  - `uri`: `protocol://host:port`, protocol is [mqtt | mqtts]
+  - `host`: ipaddress or host name (override by uri if set)
+  - `port`: port number (override by uri if set)
+  - `tls`: true/false (override by uri if set to mqtts or wss)
+  - `user`: string username
+  - `pass`: string password
+  - `auth`: true/false - override = true if `user` or `pass` exist
+  - `clientId`: string client id
+  - `keepalive`
 
-...
+* `client`
+  - `on(event, callback)`: add event listener for
+    + event: `connect` - client connected
+    + event: `closed` - client disconnected
+    + event: `error` - error
+    + event: `message` - data received with format {topic, data, retain}
+  - `connect`: begin connection
+  - `disconnect`: disconnect
+  - `subscribe(topic, qos)`
+  - `publish(topic, payload, qos, retain)`
 
 ## Todo
 
