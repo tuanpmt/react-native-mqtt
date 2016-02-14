@@ -75,6 +75,7 @@
 		FF7A9D4D1C64788B006743BA /* RCTMqtt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTMqtt.h; sourceTree = "<group>"; };
 		FF7A9D551C6478D5006743BA /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		FFAB5A531C6F7A3C00B4953D /* Mqtt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mqtt.m; sourceTree = "<group>"; };
+		FFAB5A561C702CA500B4953D /* Mqtt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mqtt.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +116,7 @@
 			children = (
 				FF7A9D551C6478D5006743BA /* Pods.xcodeproj */,
 				FFAB5A531C6F7A3C00B4953D /* Mqtt.m */,
+				FFAB5A561C702CA500B4953D /* Mqtt.h */,
 				FF7A9D4C1C64788B006743BA /* RCTMqtt.m */,
 				FF7A9D4D1C64788B006743BA /* RCTMqtt.h */,
 				FF7A9D411C64785B006743BA /* Products */,
