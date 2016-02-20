@@ -121,11 +121,17 @@ mqtt.createClient({
     + event: `connect` - client connected
     + event: `closed` - client disconnected
     + event: `error` - error
-    + event: `message` - data received with format {topic, data, retain}
+    + event: `message` - message object
   - `connect`: begin connection
   - `disconnect`: disconnect
   - `subscribe(topic, qos)`
   - `publish(topic, payload, qos, retain)`
+
+* `message`
+  - `retain`: *boolean* `false`
+  - `qos`: *number* `2`
+  - `data`: *string* `"test message"`
+  - `topic`: *string* `"/data"`
 
 ## Todo
 
