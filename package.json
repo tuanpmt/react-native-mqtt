@@ -1,6 +1,6 @@
 {
   "name": "react-native-mqtt",
-  "version": "0.1.0-beta3",
+  "version": "0.1.0-beta4",
   "description": "MQTT client for react-native",
   "main": "index.js",
   "scripts": {
