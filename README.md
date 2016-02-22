@@ -1,5 +1,8 @@
 
 
+[![npm](https://img.shields.io/npm/dt/react-native-mqtt.svg)]()
+[![npm](https://img.shields.io/badge/paypal-donate-red.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CX3EP5VFRGWF8)
+
 ## Description 
 
 [react-native](https://github.com/facebook/react-native) mqtt client module
