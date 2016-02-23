@@ -52,7 +52,7 @@ module.exports = {
 	},
 	createClient: async function(options) {
 		if(options.uri) {
-			var pattern = /^((mqtt[s]?|ws[s]?)?:(\/\/)([a-zA-Z_\.]*):?(\d+))$/;
+			var pattern = /^((mqtt[s]?|ws[s]?)?:(\/\/)([0-9a-zA-Z_\.]*):?(\d+))$/;
 			var matches = options.uri.match(pattern);
 			var protocol = matches[2];
 			var host = matches[4];
