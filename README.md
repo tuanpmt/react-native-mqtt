@@ -1,7 +1,8 @@
 
 
 [![npm](https://img.shields.io/npm/dt/react-native-mqtt.svg)]()
-[![npm](https://img.shields.io/badge/paypal-donate-red.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CX3EP5VFRGWF8)
+
+# Please use [react-native-mqttjs](https://github.com/tuanpmt/react-native-mqttjs) for your application, this repository not use for production
 
 ## Description 
 
