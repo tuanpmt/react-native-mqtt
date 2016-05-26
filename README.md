@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/dt/react-native-mqtt.svg)]()
 
-# Please use [react-native-mqttjs](https://github.com/tuanpmt/react-native-mqttjs) for your application, this repository not use for production
+# Please use [paho.mqtt.javascript](https://github.com/eclipse/paho.mqtt.javascript) for your application, this repository not use for production
 
 ## Description 
 
