@@ -50,6 +50,9 @@ module.exports = {
 			client.dispatchEvent(data);
 		});
 	},
+	setEventHandler: function() {
+		this.eventHandler = DeviceEventEmitter.addListener("mqtt_events", (data) => this.dispatchEvents(data));
+	},
 	createClient: async function(options) {
 		if(options.uri) {
 			var pattern = /^((mqtt[s]?|ws[s]?)?:(\/\/)([0-9a-zA-Z_\.]*):?(\d+))$/;
@@ -78,27 +81,27 @@ module.exports = {
 
 		/* Listen mqtt event */
 		if(this.eventHandler === null) {
-			console.log('add mqtt_events listener')
-			this.eventHandler = DeviceEventEmitter.addListener(
-							  	"mqtt_events",
-							  	(data) => this.dispatchEvents(data));
+			this.setEventHandler();
 		}
 		this.clients.push(client);
 
 		return client;
 	},
 	removeClient: function(client) {
-		var clientIdx = this.clients.indexOf(client);
+		Mqtt.removeClient(client.clientRef)
+			.then(() => {
+				var clientIdx = this.clients.indexOf(client);
 
-		/* TODO: destroy client in native module */
+				if (clientIdx > -1)	{
+					this.clients.splice(clientIdx, 1);
+				}
 
-		if(clientIdx > -1)
-			this.clients.splice(clientIdx, 1);
-
-		if(this.clients.length > 0) {
-			this.eventHandler.remove();
-			this.eventHandler = null;
-		}
+				if (this.clients.length > 0) {
+					if (this.eventHandler !== null) {
+						this.eventHandler.remove();
+						this.setEventHandler();
+					}
+				}
+			});
 	}
-	
 };

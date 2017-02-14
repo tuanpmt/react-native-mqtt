@@ -73,7 +73,12 @@ public class RCTMqttModule extends ReactContextBaseJavaModule {
     public void disconnect(final int clientRef) {
       clients.get(clientRef).disconnect();
     }
-    
+
+    @ReactMethod
+    public void removeClient(final int clientRef, Promise promise) {
+        clients.remove(clientRef);
+        promise.resolve(clientRef);
+    }
 
     @ReactMethod
     public void subscribe(final int clientRef, final String topic, final int qos) {
